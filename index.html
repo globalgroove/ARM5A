@@ -118,7 +118,9 @@ const AGENDA = [
      One entry per event, named like in the AGENDA. All fields are optional:
        poster         image file, e.g. "assets/img/posters/2026-11-14.jpg"  (dotted placeholder until the file exists)
        alt            short description of the poster, for screen readers
-       price          shown as the Price line under the poster, e.g. "10 ouros" (nothing if empty)
+       price          numbers only, shown as the Price line under the poster: "10"  (nothing if empty)
+       promoter       who promoted the event, e.g. "Enfermo Distro, Hekatombe"  (nothing if empty)
+       credits        poster credits, e.g. "Name, Name"  (nothing if empty)
        place          short line shown after the date in the Data line in the agenda row, e.g. "Lisboa, Galeria X" (also searchable)
        details        list of [ "label", "value" ] shown under the poster (venue, time, entry ...)
        text           a paragraph, or a list of paragraphs
@@ -133,6 +135,7 @@ const TEXTS = {
   },
 
   transformer: {
+    promoter: "ARM, Hekatombe",
     poster: "assets/img/agenda/260514-transformer-megabasse-telomante.webp",
     alt: "Poster: Transformer, Megabasse, Telomante, 14 May"
   },
@@ -153,7 +156,8 @@ const TEXTS = {
   },
 
   prado: {
-    price: "8 paus",
+    promoter: "SNC",
+    price: "8",
     poster: "assets/img/agenda/261030-prado.webp",
     alt: "Poster: Prado, Banda Humilde, Folgosa Cadafaz, 30 October"
   },
@@ -169,13 +173,14 @@ const TEXTS = {
   },
 
   noiteprimordial: {
-    price: "8 ossos",
+    promoter: "Umbra Bookings, Enfermo Distro, Hekatombe Records",
+    price: "8",
     poster: "assets/img/agenda/270123-noite-primordial.webp",
     alt: "Poster: Noite Primordial, Durvena Cabina, Orar, Herege, 23 January 2027"
   },
 
   cannibe: {
-    price: "8€",
+    price: "8",
     poster: "assets/img/agenda/261127-cannibe.webp",
     alt: "Poster: Cannibe, Drenagem, Ian Duclos, 27 November"
   },
@@ -186,12 +191,14 @@ const TEXTS = {
   },
 
   sheik: {
+    promoter: "ARM, Hekatombe",
     poster: "assets/img/agenda/260422-sheik-anorak.webp",
     alt: "Poster: Sheik Anorak, İpek Odabaşı, Mijo Preto, 22 April"
   },
 
   enfermo: {
-    price: "6¥",
+    promoter: "Enfermo Distro, Hekatombe",
+    price: "6",
     poster: "assets/img/agenda/241006-enfermo-distro.webp",
     alt: "Poster: Enfermo Distro x Hekatombe, October 2024: Trasgo, Kastrata, Ramrife, Eclipse Jugular, Insomnia, Butterfuck"
   },
@@ -202,28 +209,31 @@ const TEXTS = {
   },
 
   crepitaculo: {
-    price: "10 ouros",
+    price: "10",
     poster: "assets/img/agenda/261031-crepitaculo.webp",
     alt: "Poster: Crepitáculo, 31 October 2026"
   },
 
   trasgo: {
+    promoter: "ARM, Hekatombe",
     poster: "assets/img/agenda/260610-arm5-hekatombe.webp",
     alt: "Poster: ARM5A x Hekatombe, 10 June 2026"
   },
 
   gallaecian: {
+    promoter: "Gallaecian Cult, Enfermo Distro",
     poster: "assets/img/agenda/260217-gallaecian-cult.webp",
     alt: "Poster: Gallaecian Cult & Enfermo Distro, 17 February"
   },
 
   occupied: {
-    price: "5bux",
+    price: "5",
     poster: "assets/img/agenda/250915-occupied-head.webp",
     alt: "Poster: Occupied Head, Neither-Neither"
   },
 
   termitario: {
+    promoter: "Trama",
     poster: "assets/img/agenda/250614-termitario-3.webp",
     alt: "Poster: Termitário #3, António Baião"
   },
@@ -234,17 +244,20 @@ const TEXTS = {
   },
 
   enterrados: {
+    promoter: "Hekatombe, ARM",
     poster: "assets/img/agenda/250201-enterrados-no-jardim.webp",
     alt: "Poster: Enterrados no Jardim, 1 February"
   },
 
   holocausto: {
-    price: "$6",
+    promoter: "ARM, Hekatombe",
+    price: "6",
     poster: "assets/img/agenda/241207-holocausto-canibal.webp",
     alt: "Poster: Holocausto Canibal, Drenagem, Distrofia"
   },
 
   massacre: {
+    promoter: "Hekatombe, Enfermo Distro",
     poster: "assets/img/agenda/241111-vomit-self.webp",
     alt: "Poster: Vomit-Self, P/O Massacre, 11 November"
   },
@@ -255,17 +268,20 @@ const TEXTS = {
   },
 
   booklaunch: {
-    price: "Free",
+    promoter: "Livraria Trama, Hekatombe, Barco Bêbado",
+    price: "0",
     poster: "assets/img/agenda/240706-book-launch.webp",
     alt: "Poster: Book launch: Kenji Siratori, Rui Baião, Ian Duclos, Vomit Self"
   },
 
   leviata: {
+    promoter: "Leviatã, Enfermo Distro",
     poster: "assets/img/agenda/240622-the-end-of-leviata.webp",
     alt: "Poster: The End of Leviatã, 22 June"
   },
 
   distrofia: {
+    promoter: "Leviatã, Enfermo Distro",
     poster: "assets/img/agenda/240525-distrofia-traumatico-desmame.webp",
     alt: "Poster: Distrofia, Traumático Desmame, Ramrife, 25 May"
   }
@@ -287,9 +303,7 @@ const PAGE = {
   site: {
     title: "ARM5A",
     links: [                             // [ "text", "link" ]. "#..." jumps to a section of this page.
-      ["Work",        "work/"],          // anything else opens that page (folder or file, relative to the site root)
-      ["Discography", "discography/"],
-      ["Contact",     "contact/"]
+      ["Contact",     "contact/"]        // anything else opens that page (folder or file, relative to the site root)
     ]                                    // an empty list [] shows the title only, without a menu
   },
 
@@ -306,8 +320,8 @@ const PAGE = {
 
   /* ---- PAGE IDENTITY ------------------------------------------------ */
   browserTitle: "ARM5A",         // text on the browser tab
-  logo: { src: "", alt: "Home", mark: "registration" },  // small mark left of the menu title, links to the site root.
-                                   // Empty src = a placeholder mark, mark: "registration" (square, circle, crosshair), "lens" (black ellipse, tall ring, side wedges) or "cross" (both combined)
+  logo: { src: "", alt: "Home", mark: "" },  // small mark left of the menu title, links to the site root.
+                                   // Empty src and mark "" = no logo.  Empty src = a placeholder mark, mark: "registration" (square, circle, crosshair), "lens" (black ellipse, tall ring, side wedges) or "cross" (both combined)
                                    // Use a small square SVG or PNG with a transparent background (it is shown up to 28 x 28 px), e.g. "assets/img/logo.svg"
   sideLabel: "AGENDA",            // text on the vertical side tab. "" = show the page number instead
   showTabs: true,                // true = show the side tab; false = hide it
@@ -328,11 +342,11 @@ const PAGE = {
   text: [""],
 
   /* ---- LOGO IN THE LEFT COLUMN (shown until an event is opened) ---------- */
-  restLogo: { src: "assets/img/arm5a-logo.png", alt: "ARM5" },
+  restLogo: { src: "", alt: "ARM5" },   // the big logo is parked: put "assets/img/arm5a-logo.png" here to show it again
                                  // black logo on a transparent background (it turns white in dark mode by itself). "" = show the figure below instead
 
   /* ---- IMAGE (left column, 3:2 landscape, no border, no caption). Used only when restLogo.src is empty; empty src = halftone grayscale placeholder ---- */
-  figure: { src: "", alt: "" }
+  figure: { src: "", alt: "", placeholder: false }   // placeholder: true = halftone grey block while no event is open
 };
 </script>
 <!-- ===================== END OF CONTENT ===================== -->
@@ -373,6 +387,7 @@ mark{background:var(--ink);color:var(--paper);padding:0 1px}   /* search matches
 .logo svg,.logo img,.logo canvas{display:block;width:100%;height:100%}
 .logo img{object-fit:contain;object-position:left center}
 .logo:hover{opacity:.7}
+.logo[hidden]{display:none}
 .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
 .site-btn{display:block;background:var(--paper);color:var(--ink);border:0;padding:3px 8px 3px 0;font:500 14px/1.3 var(--label);letter-spacing:.14em;cursor:pointer;text-align:left}
 /* the open/close hint: a small thin chevron, pale and set apart from the title. Turns up when open; darkens on hover.
@@ -449,7 +464,8 @@ main{grid-area:past;min-width:0}      /* upcoming and past events stack in the r
 .ag-head{margin:0 0 10px}
 .ag-head .ag-h{margin:0}
 .ag-ctrl[hidden]{display:none}
-.ag-ctrl{margin:0 0 2px}   /* the year index: the head line of the table. The year being read is shown in black */
+.ag-ctrl{position:sticky;top:0;z-index:5;margin:0;padding:6px 0 7px 8px;background:var(--paper);border-bottom:1px solid color-mix(in srgb,var(--rule) 45%,transparent)}   /* the year index: the head line of the table, stuck to the top of the scrolling box so rows disappear right under it. The year being read is shown in black */
+.agenda tbody tr.yr:first-child th{border-bottom:0}
 .ag-ctrl .ag-years{margin:0;line-height:14px}
 .agenda.up th{font-size:16px;padding:6px 28px 6px 8px}
 .agenda.up tr>*{background:var(--ink);color:var(--paper)}   /* upcoming events: solid black rows */
@@ -536,8 +552,8 @@ aside{align-self:stretch}
   .rest-logo{max-width:230px}
   .detail{position:relative;top:auto;width:100%}   /* relative, so that Info and Close stay inside the frame */
   .ag-scroll{max-height:none!important;overflow:visible}   /* phone: no scrolling box, the page itself scrolls */
-  .site{width:auto}
-  .ag-ctrl{position:sticky;top:40px;z-index:6;background:var(--paper);padding:8px 0 6px}   /* the year index stays in view under the menu */
+  .site{width:auto;margin:0;padding-bottom:12px}   /* the menu bar covers its own gap, so nothing shows between it and the year index */
+  .ag-ctrl{top:var(--site-h,44px);z-index:6;padding:8px 0 6px 8px}   /* the year index stays in view under the menu */
   .ag-box input{font-size:16px}         /* 16px: stops the browser from zooming in when the search is tapped */
   .tab-side{font-size:18px;padding:12px 6px}
 }
@@ -648,7 +664,8 @@ aside{align-self:stretch}
       var lim = new Image(); lim.src = root + lg.src; lim.alt = '';
       lim.onerror = function(){ logoMark(logo, lg.mark); };
       logo.appendChild(lim);
-    } else logoMark(logo, lg.mark);
+    } else if (lg.mark) logoMark(logo, lg.mark);
+    else logo.hidden = true;                                 // no src and no mark: no logo at all
 
     // side tab: text from sideLabel (or the page number); with nextPage set, a second outlined box (number+1) links to the next page
     if (C.showTabs) {
@@ -699,6 +716,9 @@ aside{align-self:stretch}
       var f = $('d-flip'); f.textContent = on ? 'Poster' : 'Info'; f.setAttribute('aria-pressed', on ? 'true' : 'false');
     }
     function toggleInfo(){ if (detail.classList.contains('has-info')) showInfo($('d-info').hidden); }
+    function stuck(){ var st = document.querySelector('.site'), c = toolsBlock && toolsBlock.ctrl; return (st ? st.offsetHeight : 44) + (c && !c.hidden ? c.offsetHeight : 0); }   // phone: height of the menu bar + year index that stay on top
+    function setSiteH(){ var st = document.querySelector('.site'); if (st) document.documentElement.style.setProperty('--site-h', st.offsetHeight + 'px'); }
+    setSiteH(); window.addEventListener('resize', setSiteH); window.addEventListener('load', setSiteH);
     function dock(){                                     // desktop: the frame lives in the left column. Phone: it sits in a row under the clicked line
       if (!current) return;
       if (narrow()) { current.parentNode.insertBefore(inl, current.nextSibling); inlTd.appendChild(detail); figBox.hidden = false; }
@@ -708,7 +728,7 @@ aside{align-self:stretch}
       if (current) { current.classList.remove('on'); current.querySelector('.ev').setAttribute('aria-expanded', 'false'); }
       current = tr; tr.classList.add('on'); tr.querySelector('.ev').setAttribute('aria-expanded', 'true');
       var sp = $('d-specs'); sp.innerHTML = '';
-      [['Line-Up', ev.title, ''], ['Data', (ev.date || '') + (ev.place ? '  \u00b7  ' + ev.place : ''), 'q'], ['Price', ev.price, '']].forEach(function(r){
+      [['Line-Up', ev.title, ''], ['Data', (ev.date || '') + (ev.place ? '  \u00b7  ' + ev.place : ''), 'q'], ['Price', ev.price, ''], ['Promoter', ev.promoter, ''], ['Poster', ev.credits, '']].forEach(function(r){
         if (!r[1]) return; sp.appendChild(el('dt', null, r[0])); sp.appendChild(el('dd', r[2], r[1]));
       });
       var pbox = $('d-poster'); pbox.innerHTML = ''; detail.style.removeProperty('--ar-n'); pbox.style.removeProperty('--ar');
@@ -730,7 +750,11 @@ aside{align-self:stretch}
       detail.classList.toggle('has-info', showBtn); $('d-flip').hidden = !showBtn;
       showInfo(false);                                   // every event opens on its poster
       detail.hidden = false; dock();
-      if (!quiet && narrow()) window.scrollTo({ top: tr.getBoundingClientRect().top + window.scrollY - 88, behavior: 'smooth' });   // phone: the line goes to the top, the poster is right under it
+      if (!quiet && !narrow()) {                         // website: the clicked line goes exactly to the top of its table, under the year index
+        var sw = tr.closest('.ag-scroll');
+        if (sw && sw.scrollHeight > sw.clientHeight + 1) { var c0 = sw.querySelector('.ag-ctrl'); sw.scrollTo({ top: sw.scrollTop + tr.getBoundingClientRect().top - sw.getBoundingClientRect().top - (c0 ? c0.offsetHeight : 0), behavior: 'smooth' }); }
+      }
+      if (!quiet && narrow()) window.scrollTo({ top: tr.getBoundingClientRect().top + window.scrollY - stuck(), behavior: 'smooth' });   // phone: the line goes to the top, the poster is right under it
     }
     function closeEvent(quiet){
       if (!current) return;
@@ -777,7 +801,7 @@ aside{align-self:stretch}
       var sec = el('section', 'ag-sec'); sec.setAttribute('aria-label', block.title || (block.tools ? 'Past events' : 'Upcoming events'));
       if (block.title) { var head = el('div', 'ag-head'); head.appendChild(el('h2', 'ag-h', block.title)); sec.appendChild(head); }
       if (block.tools && !toolsBlock) {                  // control row: the year index (the search field lives in the top-right corner of the page)
-        toolsBlock = blk; var ctrl = el('div', 'ag-ctrl'); ctrl.appendChild($('ag-years')); ctrl.hidden = true; sec.appendChild(ctrl);
+        toolsBlock = blk; var ctrl = el('div', 'ag-ctrl'); ctrl.appendChild($('ag-years')); ctrl.hidden = true; blk.ctrl = ctrl;   // (it goes inside the scrolling box, stuck to its top)
       }
       if (!block.tools && !block.title && block.rows.length && C.upcomingLabel) sec.appendChild(el('p', 'ag-tag', C.upcomingLabel));
       if (!block.rows.length && !block.tools) {          // nothing planned: a quiet line instead of an empty table
@@ -809,7 +833,7 @@ aside{align-self:stretch}
       });
       var wrap = el('div', 'ag-scroll');                // height limit: a block taller than agendaMaxHeight scrolls
       wrap.style.maxHeight = C.agendaMaxHeight || '55vh';
-      table.appendChild(body); wrap.appendChild(table); blk.table = table; if (block.tools) { blk.spacer = el('div', 'ag-pad'); wrap.appendChild(blk.spacer); } sec.appendChild(wrap); (block.tools ? $('agenda') : $('agenda-up')).appendChild(sec);   // both end up stacked in the right column, in the order written
+      if (blk.ctrl) wrap.appendChild(blk.ctrl); table.appendChild(body); wrap.appendChild(table); blk.table = table; if (block.tools) { blk.spacer = el('div', 'ag-pad'); wrap.appendChild(blk.spacer); } sec.appendChild(wrap); (block.tools ? $('agenda') : $('agenda-up')).appendChild(sec);   // both end up stacked in the right column, in the order written
       blk.wrap = wrap; blocks.push(blk);
     });
 
@@ -863,10 +887,10 @@ aside{align-self:stretch}
         if (i) { var dot = el('span', null, '\u00b7'); dot.setAttribute('aria-hidden', 'true'); yBox.appendChild(dot); }
         var yb = el('button', null, y); yb.type = 'button';
         yb.addEventListener('click', function(){
-          var t = yearFirst[y], w = t.blk.wrap;
+          var t = yearFirst[y], w = t.blk.wrap, ch = t.blk.ctrl ? t.blk.ctrl.offsetHeight : 0;
           if (q.value) { q.value = ''; filter(); refit(); }
-          if (w.scrollHeight > w.clientHeight + 1) { w.scrollTop += t.tr.getBoundingClientRect().top - w.getBoundingClientRect().top; w.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
-          else window.scrollTo({ top: t.tr.getBoundingClientRect().top + window.scrollY - 88, behavior: 'smooth' });   // phone: the page scrolls, not the table
+          if (w.scrollHeight > w.clientHeight + 1) { w.scrollTop += t.tr.getBoundingClientRect().top - w.getBoundingClientRect().top - ch; w.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
+          else window.scrollTo({ top: t.tr.getBoundingClientRect().top + window.scrollY - stuck(), behavior: 'smooth' });   // phone: the page scrolls, not the table
         });
         yBox.appendChild(yb); ybtn[y] = yb;
       });
@@ -883,13 +907,14 @@ aside{align-self:stretch}
       yearOrder.forEach(function(y){ if (!yearFirst[y].tr.hidden) last = yearFirst[y].tr; });
       if (!last) return;
       if (narrow()) { sp.style.height = Math.max(240, window.innerHeight - 90 - (toolsBlock.table.getBoundingClientRect().bottom - last.getBoundingClientRect().top)) + 'px'; return; }   // phone: room for the last years (and the fly)
-      if (toolsBlock.table.offsetHeight <= w.clientHeight) return;   // everything fits: nothing to scroll
+      var ch = toolsBlock.ctrl ? toolsBlock.ctrl.offsetHeight : 0;
+      if (toolsBlock.table.offsetHeight + ch <= w.clientHeight) return;   // everything fits: nothing to scroll
       var h = toolsBlock.table.getBoundingClientRect().bottom - last.getBoundingClientRect().top;
-      sp.style.height = Math.max(0, w.clientHeight - h) + 'px';
+      sp.style.height = Math.max(0, w.clientHeight - ch - h) + 'px';
     }
     function markYear(){
       if (!toolsBlock) return;
-      var w = toolsBlock.wrap, top = (w.scrollHeight > w.clientHeight + 1) ? w.getBoundingClientRect().top + 4 : 90, cur = null;   // phone: the line 90px from the top of the screen
+      var w = toolsBlock.wrap, top = (w.scrollHeight > w.clientHeight + 1) ? w.getBoundingClientRect().top + (toolsBlock.ctrl ? toolsBlock.ctrl.offsetHeight : 0) + 4 : stuck() + 4, cur = null;   // phone: the line 90px from the top of the screen
       yearOrder.forEach(function(y){ var tr = yearFirst[y].tr; if (tr.hidden) return; if (!cur || tr.getBoundingClientRect().top <= top) cur = y; });
       Object.keys(ybtn).forEach(function(y){ ybtn[y].classList.toggle('on', y === cur); if (y === cur) ybtn[y].setAttribute('aria-current', 'true'); else ybtn[y].removeAttribute('aria-current'); });
     }
@@ -967,6 +992,7 @@ aside{align-self:stretch}
       var lg2 = new Image(); lg2.className = 'rest-logo'; lg2.alt = rl.alt || ''; lg2.onerror = function(){ lg2.hidden = true; };   // if the file is not found nothing is shown (no broken-image text)
       lg2.src = root + rl.src; fig.appendChild(lg2);
     } else if (!f.src) {
+      if (f.placeholder === false) return;
       var h = el('div', 'halftone'); h.setAttribute('role', 'img'); h.setAttribute('aria-label', f.alt || 'Image placeholder'); fig.appendChild(h);
     } else {
       var fr = el('div', 'frame'), im = new Image();
