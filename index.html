@@ -579,7 +579,10 @@ aside{align-self:stretch}
   .ag-count{display:none}
   .page.no-tabs .ag-tools{right:12px}   /* the menu bar covers its own gap, so nothing shows between it and the year index */
   .ag-ctrl{top:var(--site-h,44px);z-index:6;padding:8px 0 6px 8px}   /* the year index stays in view under the menu */
-  .ag-box input{font-size:16px}         /* 16px: stops the browser from zooming in when the search is tapped */
+  .ag-box{border-bottom:1px solid var(--rule);transition:width .4s cubic-bezier(.22,.7,.2,1),opacity .25s ease,visibility 0s linear .4s,border-color .2s}
+  .ag-box:focus-within{border-bottom-color:var(--ink)}
+  .ag-box input{font-size:16px;width:133.34%;padding:3px 0 3px 0;border-bottom:0;transform:scale(.75);transform-origin:left center}   /* the field keeps 16px (a smaller one makes the phone zoom in when tapped) and is drawn at 12px, smaller than the title */
+  .ag-box .ag-x{font-size:14px;padding:3px 4px}
   .tab-side{font-size:18px;padding:12px 6px}
 }
 @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}tbody tr{transition:none}}
