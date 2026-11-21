@@ -312,7 +312,8 @@ const PAGE = {
   site: {
     title: "ARM5A",
     links: [                             // [ "text", "link" ]. "#..." jumps to a section of this page.
-      ["Contact",     "contact/"]        // anything else opens that page (folder or file, relative to the site root)
+      ["Bunker",      "bunker/"],
+      ["Info",        "info/"]           // anything else opens that page (folder or file, relative to the site root)
     ]                                    // an empty list [] shows the title only, without a menu
   },
 
@@ -399,6 +400,7 @@ mark{background:var(--ink);color:var(--paper);padding:0 1px}   /* search matches
 .logo:hover{opacity:.7}
 .logo[hidden]{display:none}
 .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.menu-btn{display:none}
 .site-btn{display:block;background:none;color:inherit;border:0;padding:3px 0;font:500 14px/1.3 var(--label);letter-spacing:.14em;cursor:default;text-align:left}   /* desktop: just the title, the sections sit next to it */
 .site-menu{display:flex;gap:28px;margin:0;padding:0;list-style:none}   /* desktop: the sections of the site, side by side */
 .site-menu[hidden]{display:flex}
@@ -567,18 +569,19 @@ aside{align-self:stretch}
   .ag-scroll{max-height:none!important;overflow:visible}   /* phone: no scrolling box, the page itself scrolls */
   .site{margin:0 -44px 14px -12px;padding:13px 44px 13px 12px;gap:0}
   .page.no-tabs .site{margin-right:-12px;padding-right:12px}
-  .site-btn{cursor:pointer;padding:3px 0}
+  .menu-btn{position:fixed;top:calc(env(safe-area-inset-top,0px) + 11px);right:8px;z-index:10;display:grid;place-items:center;width:30px;height:30px;padding:0;background:none;border:0;color:var(--paper);cursor:pointer}
+  .menu-btn svg{display:block;width:17px;height:17px;fill:none;stroke:currentColor;stroke-width:1.2;stroke-linecap:round}
+  .menu-btn[hidden]{display:none}
   .site-menu,.site-menu[hidden]{position:absolute;top:100%;left:0;right:0;display:block;margin:0;background:var(--ink);border-top:1px solid #3b3c3b}   /* phone: the title opens the sections as a dropdown */
   .site-menu[hidden]{display:none}
   .site-menu li+li{border-top:1px solid #3b3c3b}
   .site-menu a{padding:12px 12px;opacity:1}
-  .ag-tools{top:calc(env(safe-area-inset-top,0px) + 11px);right:50px}
-  .ag-tools.open .ag-box{width:calc(100vw - 215px)}   /* stays clear of the site title */
-  .ag-count{display:none}
-  .page.no-tabs .ag-tools{right:12px}   /* the menu bar covers its own gap, so nothing shows between it and the year index */
+  .ag-tools,.page.no-tabs .ag-tools{top:calc(env(safe-area-inset-top,0px) + 11px);right:42px}   /* phone: the search icon, with the menu icon in the very corner to its right */
+  .ag-tools.open .ag-box{width:calc(100vw - 190px)}   /* stays clear of the site title */
+  .ag-count{display:none}   /* the menu bar covers its own gap, so nothing shows between it and the year index */
   .ag-ctrl{top:var(--site-h,44px);z-index:6;padding:8px 0 6px 8px}   /* the year index stays in view under the menu */
   .ag-box{border-bottom:1px solid var(--rule);transition:width .4s cubic-bezier(.22,.7,.2,1),opacity .25s ease,visibility 0s linear .4s,border-color .2s}
-  .ag-box:focus-within{border-bottom-color:var(--ink)}
+  .ag-box:focus-within{border-bottom-color:var(--paper)}
   .ag-box input{font-size:16px;width:133.34%;padding:3px 0 3px 0;border-bottom:0;transform:scale(.75);transform-origin:left center}   /* the field keeps 16px (a smaller one makes the phone zoom in when tapped) and is drawn at 12px, smaller than the title */
   .ag-box .ag-x{font-size:14px;padding:3px 4px}
   .tab-side{font-size:18px;padding:12px 6px}
@@ -596,7 +599,8 @@ aside{align-self:stretch}
   <!-- site bar: logo (links home) + menu title. Stays visible while scrolling -->
   <nav class="site" id="site" aria-label="Site">
     <a class="logo" id="logo"></a>
-    <button type="button" class="site-btn" id="site-btn" aria-expanded="false" aria-controls="site-menu"><span id="site-title"></span></button>
+    <span class="site-btn" id="site-btn"><span id="site-title"></span></span>
+    <button type="button" class="menu-btn" id="menu-btn" aria-label="Menu" aria-expanded="false" aria-controls="site-menu"><svg viewBox="0 0 18 18" aria-hidden="true"><path d="M2 6 H16 M2 12 H16"/></svg></button>
     <ul class="site-menu" id="site-menu" hidden></ul>
   </nav>
 
@@ -709,7 +713,7 @@ aside{align-self:stretch}
     }
 
     // site menu: links to sections of this page; the section being read gets a bullet; closes after a click, outside click or Esc
-    var btn = $('site-btn'), menu = $('site-menu'), links = (C.site && C.site.links) || [], spy = [];
+    var btn = $('menu-btn'), menu = $('site-menu'), links = (C.site && C.site.links) || [], spy = [];
     $('site-title').textContent = C.site ? C.site.title : '';
     links.forEach(function(l){
       var li = el('li'), a = el('a', null, l[0]), hash = l[1].charAt(0) === '#';
@@ -717,7 +721,7 @@ aside{align-self:stretch}
       if (hash) spy.push({ a: a, id: l[1].slice(1) });
       li.appendChild(a); menu.appendChild(li);
     });
-    if (!links.length) { btn.classList.add('static'); btn.removeAttribute('aria-expanded'); btn.removeAttribute('aria-controls'); }
+    if (!links.length) { btn.hidden = true; }
     else {
       var setOpen = function(o){ if (!narrow()) { menu.hidden = true; btn.setAttribute('aria-expanded', 'false'); return; } menu.hidden = !o; btn.setAttribute('aria-expanded', o); };   // desktop: the sections are always shown next to the title
       btn.addEventListener('click', function(){ setOpen(menu.hidden); });
