@@ -330,7 +330,7 @@ const PAGE = {
 
   /* ---- PAGE IDENTITY ------------------------------------------------ */
   browserTitle: "ARM5A",         // text on the browser tab
-  logo: { src: "", alt: "Home", mark: "" },  // small mark left of the menu title, links to the site root.
+  logo: { src: "assets/img/arm5a-mark.png", alt: "ARM5A", mark: "" },  // small mark left of the menu title, links to the site root.
                                    // Empty src and mark "" = no logo.  Empty src = a placeholder mark, mark: "registration" (square, circle, crosshair), "lens" (black ellipse, tall ring, side wedges) or "cross" (both combined)
                                    // Use a small square SVG or PNG with a transparent background (it is shown up to 28 x 28 px), e.g. "assets/img/logo.svg"
   sideLabel: "AGENDA",            // text on the vertical side tab. "" = show the page number instead
@@ -369,7 +369,7 @@ const PAGE = {
 /* STYLE SHEET. Same variables as the other pages. It moves to assets/css/style.css in the next step.
    --frame is the thickness of the outer lines of the tables: 1px = light, 3px = heavy like the printed sheet. */
 :root{
-  --paper:#ECEBE6; --ink:#141413; --rule:#8d8b84; --tab-text:#ECEBE6; --frame:1px; --accent:#7a3cf0;
+  --paper:#ECEBE6; --ink:#141413; --hover:#74716c; --rule:#8d8b84; --tab-text:#ECEBE6; --frame:1px; --accent:#7a3cf0;
   --label:"IBM Plex Sans Condensed","Zen Kaku Gothic New","Arial Narrow",Arial,sans-serif;
   --jp:"Zen Kaku Gothic New","IBM Plex Sans Condensed",Arial,sans-serif;   /* header title and sections */
   --value:"IBM Plex Mono","Zen Kaku Gothic New",ui-monospace,Menlo,Consolas,monospace;
@@ -378,9 +378,9 @@ const PAGE = {
   padding-bottom:env(safe-area-inset-bottom,0px);
 }
 @media (prefers-color-scheme:dark){
-  :root:not([data-theme="light"]){--paper:#171716;--ink:#E6E4DD;--rule:#6b6963;--tab-text:#171716;--accent:#a98bff}
+  :root:not([data-theme="light"]){--paper:#171716;--ink:#E6E4DD;--rule:#6b6963;--hover:#8d8b84;--tab-text:#171716;--accent:#a98bff}
 }
-:root[data-theme="dark"]{--paper:#171716;--ink:#E6E4DD;--rule:#6b6963;--tab-text:#171716;--accent:#a98bff}
+:root[data-theme="dark"]{--paper:#171716;--ink:#E6E4DD;--rule:#6b6963;--hover:#8d8b84;--tab-text:#171716;--accent:#a98bff}
 *,*::before,*::after{box-sizing:border-box}
 html{height:100%;scroll-behavior:smooth;scroll-padding-top:76px}
 body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--label);font-size:15px;line-height:1.35;min-height:100%}
@@ -399,6 +399,8 @@ mark{background:var(--ink);color:var(--paper);padding:0 1px}   /* search matches
 .logo svg,.logo img,.logo canvas{display:block;width:100%;height:100%}
 .logo img{object-fit:contain;object-position:left center}
 .logo:hover{opacity:.7}
+.site .logo{color:var(--paper);width:31px;height:30px;opacity:.9}
+.logo.tinted{background:currentColor;-webkit-mask:var(--m) center/contain no-repeat;mask:var(--m) center/contain no-repeat}   /* small, quiet mark in the header */
 .logo[hidden]{display:none}
 .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
 .menu-btn{display:none}
@@ -455,8 +457,8 @@ main{grid-area:past;min-width:0}      /* upcoming and past events stack in the r
 .agenda th{font:400 14px/1.35 var(--label);letter-spacing:.14em;text-align:left;padding:2px 28px 2px 8px;vertical-align:top}
 .agenda td{width:1%;font:400 13px/1.4 var(--value);padding:2px 8px 2px 0;vertical-align:top;white-space:nowrap}
 .agenda tr:not(.yr){cursor:pointer}
-.agenda tr:not(.yr):hover>*,.agenda tr.on>*{background:var(--ink);color:var(--paper)}
-.agenda tr:has(.ev:focus-visible)>*{background:var(--ink);color:var(--paper)}
+.agenda tr:not(.yr):hover>*,.agenda tr:has(.ev:focus-visible)>*{background:var(--hover);color:var(--paper)}   /* hover: a quiet grey */
+.agenda tr:not(.yr).on>*{background:var(--ink);color:var(--paper)}   /* the open row: black */
 .agenda .ev{font:inherit;letter-spacing:inherit;color:inherit;background:none;border:0;padding:0;margin:0;text-align:left;cursor:pointer}
 .agenda .ev:focus-visible{outline:2px solid var(--paper);outline-offset:1px}
 .agenda tr[hidden],.ag-scroll[hidden]{display:none}
@@ -476,8 +478,13 @@ main{grid-area:past;min-width:0}      /* upcoming and past events stack in the r
 .agenda tbody tr.yr:first-child th{border-bottom:0}
 .ag-ctrl .ag-years{margin:0;line-height:14px}
 .agenda.up th{font-size:16px;padding:6px 28px 6px 8px}
-.agenda.up tr>*{background:var(--ink);color:var(--paper)}   /* upcoming events: solid black rows */
-.agenda.up tr:hover>*{opacity:.86}
+.agenda.up tr>*{background:transparent;color:var(--ink);border:solid var(--ink);border-width:1px 0}   /* upcoming events: outlined rows */
+.agenda.up tr>th:first-child{border-left-width:1px}
+.agenda.up tr>td:last-child{border-right-width:1px}
+.agenda.up tr:first-child>*{background:var(--ink);color:var(--paper)}   /* the very next event is solid black */
+.agenda.up tr:hover>*{background:var(--hover);color:var(--paper)}
+.agenda.up tr.on>*{background:var(--ink);color:var(--paper)}   /* hover grey, open row black */
+.agenda.up tr.ev-inline>*{border:0}
 .agenda.up td{font-size:14px;padding:7px 8px 6px 0}
 .agenda .pl{display:block;margin-top:1px;font:400 12px/1.4 var(--value);letter-spacing:.04em;opacity:.7}
 .ag-tag{margin:0 0 7px;font:400 10px/14px var(--value);letter-spacing:.2em;color:var(--rule);text-transform:uppercase}   /* same quiet type as the year index */
@@ -692,9 +699,9 @@ aside{align-self:stretch}
     logo.href = root || './';
     logo.setAttribute('aria-label', lg.alt || 'Home');
     if (lg.src) {
-      var lim = new Image(); lim.src = root + lg.src; lim.alt = '';
-      lim.onerror = function(){ logoMark(logo, lg.mark); };
-      logo.appendChild(lim);
+      // the logo is a one-colour picture with a transparent background, drawn in the header's text colour; it replaces the written title
+      logo.classList.add('tinted'); logo.style.setProperty('--m', 'url("' + root + lg.src + '")');
+      $('site-btn').classList.add('sr');
     } else if (lg.mark) logoMark(logo, lg.mark);
     else logo.hidden = true;                                 // no src and no mark: no logo at all
 
