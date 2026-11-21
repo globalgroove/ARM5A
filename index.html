@@ -468,8 +468,8 @@ main{grid-area:past;min-width:0}      /* upcoming and past events stack in the r
 .agenda .ev{font:inherit;letter-spacing:inherit;color:inherit;background:none;border:0;padding:0;margin:0;text-align:left;cursor:pointer}
 .agenda .ev:focus-visible{outline:2px solid var(--paper);outline-offset:1px}
 .agenda tr[hidden],.ag-scroll[hidden]{display:none}
-.agenda:not(.up) tr:not(.yr):not(.ev-inline)>*{border-bottom:1px solid color-mix(in srgb,var(--rule) 22%,transparent)}   /* a very quiet hairline under each past event */
-.agenda:not(.up) tr:has(+ tr.yr)>*,.agenda:not(.up) tr:last-child>*,.agenda:not(.up) tr.on>*,.agenda:not(.up) tr:hover>*{border-bottom-color:transparent}   /* none where the year line already is, at the end, or under the open/hovered row */
+.agenda:not(.up) tr:not(.yr):not(.ev-inline)>*{border-bottom:1px solid color-mix(in srgb,var(--rule) 18%,transparent)}   /* a very quiet hairline under each past event */
+.agenda:not(.up) tr:not(.yr):not(.ev-inline):has(+ tr.yr)>*,.agenda:not(.up) tr:not(.yr):not(.ev-inline):last-child>*,.agenda:not(.up) tr:not(.yr):not(.ev-inline).on>*,.agenda:not(.up) tr:not(.yr):not(.ev-inline):hover>*{border-bottom-color:transparent}   /* none where the year line already is, at the end, or under the open/hovered row */
 
 /* year rows: small, letter-spaced, a thin rule above; the current year stays pinned at the top of the scrolling table */
 .agenda .yr th{color:var(--rule);padding:6px 0 0;font:400 11px/1 var(--value);letter-spacing:.22em;border-bottom:1px solid color-mix(in srgb,var(--rule) 45%,transparent)}   /* year row: no visible text, just a dim hairline between years (45% of the grey: raise it for a stronger line). The year in view is shown in black in the year index */
