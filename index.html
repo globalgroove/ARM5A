@@ -415,7 +415,7 @@ mark{background:var(--ink);color:var(--paper);padding:0 1px}   /* search matches
 
 /* side tabs: the label of this page, plus the next page as an outlined link when nextPage is set */
 .tabs-side{position:fixed;right:0;top:46%;z-index:5;display:flex;flex-direction:column;align-items:flex-end;gap:6px}
-.tab-side{background:var(--ink);color:var(--tab-text);writing-mode:vertical-rl;font:500 17px/1 var(--value);padding:13px 7px;letter-spacing:.08em}
+.tab-side{background:var(--ink);color:var(--tab-text);writing-mode:vertical-rl;font:500 17px/1 var(--jp);padding:13px 7px;letter-spacing:.12em}
 a.tab-side{text-decoration:none;cursor:pointer;background:var(--paper);color:var(--ink);box-shadow:inset 0 0 0 1px var(--ink)}
 a.tab-side:hover,a.tab-side:focus-visible{background:var(--ink);color:var(--tab-text);outline:none}
 
@@ -475,10 +475,10 @@ main{grid-area:past;min-width:0}      /* upcoming and past events stack in the r
 .ag-ctrl{position:sticky;top:0;z-index:5;margin:0;padding:6px 0 7px 8px;background:var(--paper);border-bottom:1px solid color-mix(in srgb,var(--rule) 45%,transparent)}   /* the year index: the head line of the table, stuck to the top of the scrolling box so rows disappear right under it. The year being read is shown in black */
 .agenda tbody tr.yr:first-child th{border-bottom:0}
 .ag-ctrl .ag-years{margin:0;line-height:14px}
-.agenda.up th{font-size:16px;padding:6px 28px 6px 8px}
+.agenda.up th{font-family:var(--jp);font-weight:400;font-size:16px;padding:6px 28px 6px 8px}
 .agenda.up tr>*{background:var(--ink);color:var(--paper)}   /* upcoming events: solid black rows */
 .agenda.up tr:hover>*{opacity:.86}
-.agenda.up td{font-size:14px;padding:7px 8px 6px 0}
+.agenda.up td{font-family:var(--jp);font-size:14px;padding:7px 8px 6px 0}
 .agenda .pl{display:block;margin-top:1px;font:400 12px/1.4 var(--value);letter-spacing:.04em;opacity:.7}
 .ag-tag{margin:0 0 7px;font:400 10px/14px var(--value);letter-spacing:.2em;color:var(--rule);text-transform:uppercase}   /* same quiet type as the year index */
 .agenda tr.ev-inline>*,.agenda.up tr.ev-inline>*{width:auto;white-space:normal;background:var(--paper);color:var(--ink);padding:4px 0 14px 8px;opacity:1}   /* phone: the open event sits in a row right under its line */
