@@ -62,9 +62,9 @@ const AGENDA = [
     rows: [
     ["CREPITÁCULO (FEST)",  "2026 . 10 . 31", "crepitaculo"],
     ["PRADO, BANDA HUMILDE, FOLGOSA CADAFAZ",          "2026 . 10 . 30","prado"],
-    ["MÉCANOSPHÉRE: PROJECTO DE MECANIZAÇÃO DOS MORTOS",          "2026 . 10 . 10","mecanosphere"],
     ["HEROÍNA, CALHAU!, BANDA HUMILDE, DJ CONCRETE ",                 "2026 . 10 . 09","heroina"],
     ["PREHISTORIC WAR CULT",          "2026 . 09 . 24"],
+    ["MÉCANOSPHÉRE: PROJECTO DE MECANIZAÇÃO DOS MORTOS",          "2026 . 09 . 10","mecanosphere"],
     ["MARKET SATURÉE, MANGUALDE, MONGOLIAN THROAT FUCK (JURASSIC DUB VERSION), DRENAGEM",          "2026 . 07 . 11"],
     ["VICENTE MATEUS, PAULA SANCHEZ, MARIJA KEROCEVIC, GABRIEL VALTCHEV",          "2026 . 07 . 02","vicente"],
     ["AXEL LARSEN, HOCHIWAH, JANIK WEU, KIRA KREMPOVA",          "2026 . 06 . 15","axel"],
@@ -151,7 +151,7 @@ const TEXTS = {
   },
 
   mecanosphere: {
-    poster: "assets/img/agenda/261010-mecanosphere.webp",
+    poster: "assets/img/agenda/260910-mecanosphere.webp",
     alt: "Poster: Mécanosphère, projecto de mecanização dos mortos"
   },
 
@@ -404,6 +404,9 @@ mark{background:var(--ink);color:var(--paper);padding:0 1px}   /* search matches
 .site-menu a::before{content:"";display:inline-block;width:1.2em}
 .site-menu a[aria-current]::before{content:"\25CF"}
 .site-menu a:hover,.site-menu a:focus-visible{background:var(--ink);color:var(--paper);outline:none}
+.site-menu li:has(>.ag-tools[hidden]){display:none}
+.site-menu .ag-tools,.page.no-tabs .site-menu .ag-tools{position:static;width:auto;margin:0;padding:8px 12px 8px 8px;display:flex;z-index:auto}   /* the search lives in the dropdown, above the links */
+.site-menu .ag-tools[hidden]{display:none}
 
 /* logo placeholder marks. "registration" uses the ink colour only; "lens" is ink plus paper-coloured cut-outs */
 .logo .ink{fill:currentColor}
@@ -543,8 +546,7 @@ aside{align-self:stretch}
 .frame img[hidden]{display:none}
 
 @media (max-width:760px){
-  .page{padding:20px 44px 40px 12px}
-  .ag-tools,.page.no-tabs .ag-tools{position:static;width:auto;margin:0 0 14px}   /* phone: the search sits under the menu */
+  .page{padding:0 44px 40px 12px}
   .page.no-tabs{padding-right:12px}
   .cols{grid-template-columns:minmax(0,1fr)}
   .cols{grid-template-areas:none}       /* phone: the logo, then the tables. The open event sits inside the table, right under its line */
@@ -553,7 +555,8 @@ aside{align-self:stretch}
   .rest-logo{max-width:230px}
   .detail{position:relative;top:auto;width:100%}   /* relative, so that Info and Close stay inside the frame */
   .ag-scroll{max-height:none!important;overflow:visible}   /* phone: no scrolling box, the page itself scrolls */
-  .site{width:auto;margin:0;padding-bottom:12px}   /* the menu bar covers its own gap, so nothing shows between it and the year index */
+  .site{width:auto;margin:0 0 0 -12px;padding:20px 8px 12px 12px}
+  .site-menu{left:12px}   /* the menu bar covers its own gap, so nothing shows between it and the year index */
   .ag-ctrl{top:var(--site-h,44px);z-index:6;padding:8px 0 6px 8px}   /* the year index stays in view under the menu */
   .ag-box input{font-size:16px}         /* 16px: stops the browser from zooming in when the search is tapped */
   .tab-side{font-size:18px;padding:12px 6px}
@@ -691,9 +694,10 @@ aside{align-self:stretch}
       if (hash) spy.push({ a: a, id: l[1].slice(1) });
       li.appendChild(a); menu.appendChild(li);
     });
+    var sli = el('li'); sli.appendChild($('ag-tools')); menu.insertBefore(sli, menu.firstChild);   // the search moves into the dropdown
     if (!links.length) { btn.classList.add('static'); btn.removeAttribute('aria-expanded'); btn.removeAttribute('aria-controls'); }
     else {
-      var setOpen = function(o){ menu.hidden = !o; btn.setAttribute('aria-expanded', o); };
+      var setOpen = function(o){ menu.hidden = !o; btn.setAttribute('aria-expanded', o); if (o && !narrow() && !$('ag-tools').hidden) $('ag-q').focus(); };
       btn.addEventListener('click', function(){ setOpen(menu.hidden); });
       menu.addEventListener('click', function(e){ if (e.target.closest('a')) setOpen(false); });
       document.addEventListener('click', function(e){ if (!$('site').contains(e.target)) setOpen(false); });
