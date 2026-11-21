@@ -211,7 +211,8 @@ const TEXTS = {
 
   crepitaculo: {
     name: "Crepitáculo",
-    lineup: "Cavaleiro da Cruz, Druída, Durvena Cabina, Gambuzino, Gnoblin, Mafarrico DJ, Moira, Quimer, Rádio Sonoplasmática, Sarça Ardente, Sarcomancia, Trunaldwo777",
+    lineup: "Cavaleiro da Cruz, Druída, Durvena Cabina ++",   // the short version; the full line-up is on the Info side
+    details: [["Line-Up", "Cavaleiro da Cruz, Druída, Durvena Cabina, Gambuzino, Gnoblin, Mafarrico DJ, Moira, Quimer, Rádio Sonoplasmática, Sarça Ardente, Sarcomancia, Trunaldwo777"]],
     price: "10",
     poster: "assets/img/agenda/261031-crepitaculo.webp",
     alt: "Poster: Crepitáculo, 31 October 2026"
@@ -745,7 +746,7 @@ aside{align-self:stretch}
       var pb = $('d-poster');
       for (var i = 0; i < 3; i++) {
         var under = detail.offsetHeight - pb.offsetHeight;
-        detail.style.setProperty('--res', Math.round(56 + under + 24) + 'px');
+        detail.style.setProperty('--res', Math.max(200, Math.round(56 + under + 24)) + 'px');
       }
     }
     window.addEventListener('resize', fitFrame);
