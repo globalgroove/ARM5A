@@ -443,6 +443,7 @@ main{grid-area:past;min-width:0}      /* upcoming and past events stack in the r
 @keyframes fly-flap-r{from{transform:rotate(28deg)}to{transform:rotate(-22deg)}}
 @media (prefers-reduced-motion:reduce){.fly .flap{animation:none}}
 .fly.dead{cursor:default}
+.fly{transition:opacity .12s linear}
 .ag-scroll::-webkit-scrollbar{width:6px;height:6px}
 .ag-scroll::-webkit-scrollbar-thumb{background:var(--rule)}
 .agenda{width:100%;border-collapse:separate;border-spacing:0 2px;margin:0}
@@ -504,7 +505,7 @@ main{grid-area:past;min-width:0}      /* upcoming and past events stack in the r
 aside{align-self:stretch}
 .detail{--panel:var(--ink);--panel-text:var(--paper);--panel-rule:#3b3c3b;position:sticky;top:56px;background:var(--panel);color:var(--panel-text);width:min(100%,calc((100vh - 200px) * var(--ar-n,.75)))}   /* dark panel, like the discography preview. The frame takes the poster's proportions; on a short screen it narrows instead of leaving margins */
 .detail[hidden]{display:none}
-.detail .close{position:absolute;top:6px;right:6px;z-index:2;background:var(--paper);color:var(--ink);border:0;font:500 10px/1 var(--label);letter-spacing:.14em;padding:4px 7px;cursor:pointer}
+.detail .close{position:absolute;top:6px;right:6px;z-index:2;width:22px;height:22px;padding:0 0 2px;background:var(--paper);color:var(--ink);border:1px solid var(--ink);border-radius:0;font:400 16px/1 var(--label);text-align:center;cursor:pointer}   /* a small boxed x */
 .detail .close:hover,.detail .close:focus-visible{background:var(--ink);color:var(--paper);outline:1px solid var(--paper)}
 .detail .stage{position:relative}
 .detail .info{position:absolute;inset:0;z-index:1;overflow:auto;background:var(--panel);color:var(--panel-text);padding:34px 10px 10px;scrollbar-width:thin;scrollbar-color:var(--panel-rule) transparent}
@@ -594,7 +595,7 @@ aside{align-self:stretch}
       <aside>
         <figure class="fig-wrap" id="fig"></figure>
         <section class="detail" id="detail" hidden aria-label="Event details">
-          <button type="button" class="close" id="d-close">Close</button>
+          <button type="button" class="close" id="d-close" aria-label="Close">&times;</button>
           <div class="stage" id="d-stage">
             <div class="poster" id="d-poster"></div>
             <!-- the details sit behind the poster: click the poster (or the Info button) to read them, click again to go back -->
@@ -932,7 +933,7 @@ aside{align-self:stretch}
       // as minimal as it gets: a dot and two sticks
       fb.innerHTML = '<svg viewBox="-12 -12 24 24" aria-hidden="true"><g class="flap"><path d="M0 0 L-8 -6"/></g><g class="flap r"><path d="M0 0 L8 -6"/></g><circle class="dot" r="2.3"/></svg>';
       zone.appendChild(fb); wrapF.appendChild(zone);        // inside the scrolling table, under the oldest entry
-      var S = 44, px = 120, py = 90, ang = Math.random() * 6.28, sp = 40, rest = 0, dead = false, last = 0, t0 = Math.random() * 100,
+      var wasIn = false, behind = false, S = 44, px = 120, py = 90, ang = Math.random() * 6.28, sp = 40, rest = 0, dead = false, last = 0, t0 = Math.random() * 100,
           calm = window.matchMedia && matchMedia('(prefers-reduced-motion:reduce)').matches;
       function place(extra){ fb.style.transform = 'translate(' + px.toFixed(1) + 'px,' + py.toFixed(1) + 'px) rotate(' + (ang * 57.2958 + 90).toFixed(1) + 'deg)' + (extra || ''); }
       function sync(){
@@ -962,6 +963,16 @@ aside{align-self:stretch}
         px += Math.cos(ang) * sp * dt; py += Math.sin(ang) * sp * dt;
         px = Math.max(0, Math.min(W, px)); py = Math.max(0, Math.min(H, py));
         place();
+        // the logo: each time the fly flies over it, it goes in front (seen) or behind (not seen at all) the logo
+        var L = toolsBlock.logo, inside = false;
+        if (L && !L.hidden && L.offsetWidth) {
+          var bx = toolsBlock.logoBox || { x0: 0, y0: 0, x1: 1, y1: 1 }, cx = px + S / 2, cy = py + S / 2;
+          inside = cx > L.offsetLeft + bx.x0 * L.offsetWidth - 4 && cx < L.offsetLeft + bx.x1 * L.offsetWidth + 4 &&
+                   cy > L.offsetTop + bx.y0 * L.offsetHeight - 4 && cy < L.offsetTop + bx.y1 * L.offsetHeight + 4;
+        }
+        if (inside && !wasIn) behind = Math.random() < .5;
+        wasIn = inside;
+        if (!dead) fb.style.opacity = (inside && behind) ? 0 : 1;
       }
       sync(); place();
       if (calm) fb.classList.add('rest'); else requestAnimationFrame(frame);        // reduced motion: it just sits there
@@ -992,7 +1003,15 @@ aside{align-self:stretch}
     // image: halftone placeholder when there is no file, otherwise the picture in a 3:2 frame
     var fig = $('fig'), f = C.figure, rl = C.restLogo || {};
     if (rl.src) {
-      var lg2 = new Image(); lg2.className = 'rest-logo'; lg2.alt = rl.alt || ''; lg2.onerror = function(){ lg2.hidden = true; }; lg2.onload = function(){ if (toolsBlock) { fitSpace(); } };   // if the file is not found nothing is shown (no broken-image text)
+      var lg2 = new Image(); lg2.className = 'rest-logo'; lg2.alt = rl.alt || ''; lg2.onerror = function(){ lg2.hidden = true; }; lg2.onload = function(){
+        try {   // the opaque part of the logo (for the fly going behind it)
+          var cv = document.createElement('canvas'), w = 240, h = Math.max(1, Math.round(240 * lg2.naturalHeight / lg2.naturalWidth)); cv.width = w; cv.height = h;
+          var cx2 = cv.getContext('2d'); cx2.drawImage(lg2, 0, 0, w, h); var d = cx2.getImageData(0, 0, w, h).data, x0 = w, y0 = h, x1 = 0, y1 = 0;
+          for (var y = 0; y < h; y++) for (var x = 0; x < w; x++) if (d[(y * w + x) * 4 + 3] > 40) { if (x < x0) x0 = x; if (x > x1) x1 = x; if (y < y0) y0 = y; if (y > y1) y1 = y; }
+          if (x1 > x0 && toolsBlock) toolsBlock.logoBox = { x0: x0 / w, y0: y0 / h, x1: (x1 + 1) / w, y1: (y1 + 1) / h };
+        } catch (e) {}
+        if (toolsBlock) fitSpace();
+      };   // if the file is not found nothing is shown (no broken-image text)
       lg2.src = root + rl.src;
       if (toolsBlock && toolsBlock.spacer) { toolsBlock.logo = lg2; toolsBlock.spacer.appendChild(lg2); } else fig.appendChild(lg2);   // at the end of the past table (easter egg: seen only at the bottom)
     } else if (!f.src) {
