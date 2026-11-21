@@ -412,9 +412,6 @@ mark{background:var(--ink);color:var(--paper);padding:0 1px}   /* search matches
 .site-menu a::before{content:"";display:inline-block;width:1.2em}
 .site-menu a[aria-current]::before{content:"\25CF"}
 .site-menu a:hover,.site-menu a:focus-visible{background:var(--ink);color:var(--paper);outline:none}
-.site-menu li:has(>.ag-tools[hidden]){display:none}
-.site-menu .ag-tools,.page.no-tabs .site-menu .ag-tools{position:static;width:auto;margin:0;padding:8px 12px 8px 8px;display:flex;z-index:auto}   /* the search lives in the dropdown, above the links */
-.site-menu .ag-tools[hidden]{display:none}
 
 /* logo placeholder marks. "registration" uses the ink colour only; "lens" is ink plus paper-coloured cut-outs */
 .logo .ink{fill:currentColor}
@@ -468,6 +465,8 @@ main{grid-area:past;min-width:0}      /* upcoming and past events stack in the r
 .agenda .ev{font:inherit;letter-spacing:inherit;color:inherit;background:none;border:0;padding:0;margin:0;text-align:left;cursor:pointer}
 .agenda .ev:focus-visible{outline:2px solid var(--paper);outline-offset:1px}
 .agenda tr[hidden],.ag-scroll[hidden]{display:none}
+.agenda:not(.up) tr:not(.yr):not(.ev-inline)>*{border-bottom:1px solid color-mix(in srgb,var(--rule) 18%,transparent)}   /* a very quiet hairline under each past event */
+.agenda:not(.up) tr:not(.yr):not(.ev-inline):has(+ tr.yr)>*,.agenda:not(.up) tr:not(.yr):not(.ev-inline):last-child>*,.agenda:not(.up) tr:not(.yr):not(.ev-inline).on>*,.agenda:not(.up) tr:not(.yr):not(.ev-inline):hover>*{border-bottom-color:transparent}   /* none where the year line already is, at the end, or under the open/hovered row */
 
 /* year rows: small, letter-spaced, a thin rule above; the current year stays pinned at the top of the scrolling table */
 .agenda .yr th{color:var(--rule);padding:6px 0 0;font:400 11px/1 var(--value);letter-spacing:.22em;border-bottom:1px solid color-mix(in srgb,var(--rule) 45%,transparent)}   /* year row: no visible text, just a dim hairline between years (45% of the grey: raise it for a stronger line). The year in view is shown in black in the year index */
@@ -492,14 +491,20 @@ main{grid-area:past;min-width:0}      /* upcoming and past events stack in the r
 .agenda tr.ev-inline:hover>*{background:var(--paper);color:var(--ink);opacity:1}
 .ag-empty{margin:0 0 1.4em;font:400 13px/1.4 var(--value);letter-spacing:.06em;opacity:.6}
 .ag-h{margin:0 0 10px;font:700 15px/1.2 var(--label);letter-spacing:.14em;text-transform:uppercase}
-.ag-tools{position:absolute;top:30px;right:64px;z-index:9;width:260px;display:flex;align-items:center;gap:12px;min-width:0}   /* search: top-right corner */
+.ag-tools{position:fixed;top:24px;right:64px;z-index:9;display:flex;align-items:center;justify-content:flex-end;gap:8px;background:var(--paper);min-width:0}   /* search: a small icon in the top-right corner; it opens the field to its left */
+.srch-btn{display:grid;place-items:center;width:30px;height:30px;padding:0;background:none;border:0;color:var(--ink);cursor:pointer;opacity:.7;transition:opacity .25s ease}
+.srch-btn:hover,.srch-btn:focus-visible,.ag-tools.open .srch-btn{opacity:1}
+.srch-btn svg{display:block;width:17px;height:17px;fill:none;stroke:currentColor;stroke-width:1.2;stroke-linecap:round}
+.ag-tools:not(.open) .ag-count{display:none}
 .page.no-tabs .ag-tools{right:20px}
 .ag-tools[hidden],.ag-years[hidden]{display:none}
-.ag-box{position:relative;flex:1 1 180px;min-width:0}
+.ag-box{position:relative;width:0;min-width:0;overflow:hidden;opacity:0;visibility:hidden;transition:width .4s cubic-bezier(.22,.7,.2,1),opacity .25s ease,visibility 0s linear .4s}
+.ag-tools.open .ag-box{width:min(240px,calc(100vw - 190px));opacity:1;visibility:visible;transition:width .4s cubic-bezier(.22,.7,.2,1),opacity .35s ease .06s,visibility 0s}
+@media (prefers-reduced-motion:reduce){.ag-box,.ag-tools.open .ag-box{transition:none}}
 .ag-box input{display:block;width:100%;font:400 11px/1.3 var(--value);color:var(--ink);background:transparent;border:0;border-bottom:1px solid var(--rule);border-radius:0;padding:5px 28px 4px 0;-webkit-appearance:none;appearance:none}
 .ag-box input::placeholder{color:var(--rule);letter-spacing:.14em}
 .ag-box input::-webkit-search-cancel-button{-webkit-appearance:none}
-.ag-box input:focus,.ag-box input:focus-visible{outline:none;border-bottom-color:var(--ink);box-shadow:0 1px 0 var(--ink)}   /* just a line; it turns black (and thickens) when typing */
+.ag-box input:focus,.ag-box input:focus-visible{outline:none;border-bottom-color:var(--ink)}   /* the line turns black when typing, it keeps its thickness */
 .ag-x{position:absolute;right:2px;top:50%;transform:translateY(-50%);background:none;border:0;color:var(--ink);font:400 16px/1 var(--value);padding:3px 7px;cursor:pointer}
 .ag-x[hidden]{display:none}
 .ag-count:empty{display:none}
@@ -568,7 +573,11 @@ aside{align-self:stretch}
   .detail{position:relative;top:auto;width:100%}   /* relative, so that Info and Close stay inside the frame */
   .ag-scroll{max-height:none!important;overflow:visible}   /* phone: no scrolling box, the page itself scrolls */
   .site{width:calc(100% + 12px);max-width:none;margin:0 0 0 -12px;padding:20px 8px 12px 12px}
-  .site-menu{left:12px}   /* the menu bar covers its own gap, so nothing shows between it and the year index */
+  .site-menu{left:12px}
+  .ag-tools{top:calc(env(safe-area-inset-top,0px) + 17px);right:50px}
+  .ag-tools.open .ag-box{width:calc(100vw - 215px)}   /* stays clear of the site title */
+  .ag-count{display:none}
+  .page.no-tabs .ag-tools{right:12px}   /* the menu bar covers its own gap, so nothing shows between it and the year index */
   .ag-ctrl{top:var(--site-h,44px);z-index:6;padding:8px 0 6px 8px}   /* the year index stays in view under the menu */
   .ag-box input{font-size:16px}         /* 16px: stops the browser from zooming in when the search is tapped */
   .tab-side{font-size:18px;padding:12px 6px}
@@ -597,6 +606,7 @@ aside{align-self:stretch}
       <button type="button" class="ag-x" id="ag-x" aria-label="Clear search" hidden>&times;</button>
     </div>
     <span class="ag-count" id="ag-count" aria-live="polite"></span>
+    <button type="button" class="srch-btn" id="ag-open" aria-label="Search the agenda" aria-expanded="false" aria-controls="ag-q"><svg viewBox="0 0 18 18" aria-hidden="true"><circle cx="7.5" cy="7.5" r="5"/><path d="M11.3 11.3 L16 16"/></svg></button>
   </div>
 
   <!-- side tab: this page's label (+ a link box to the next page when nextPage is set) -->
@@ -706,10 +716,9 @@ aside{align-self:stretch}
       if (hash) spy.push({ a: a, id: l[1].slice(1) });
       li.appendChild(a); menu.appendChild(li);
     });
-    var sli = el('li'); sli.appendChild($('ag-tools')); menu.insertBefore(sli, menu.firstChild);   // the search moves into the dropdown
     if (!links.length) { btn.classList.add('static'); btn.removeAttribute('aria-expanded'); btn.removeAttribute('aria-controls'); }
     else {
-      var setOpen = function(o){ menu.hidden = !o; btn.setAttribute('aria-expanded', o); if (o && !narrow() && !$('ag-tools').hidden) $('ag-q').focus(); };
+      var setOpen = function(o){ menu.hidden = !o; btn.setAttribute('aria-expanded', o); };
       btn.addEventListener('click', function(){ setOpen(menu.hidden); });
       menu.addEventListener('click', function(e){ if (e.target.closest('a')) setOpen(false); });
       document.addEventListener('click', function(e){ if (!$('site').contains(e.target)) setOpen(false); });
@@ -902,7 +911,15 @@ aside{align-self:stretch}
     else {
       $('ag-tools').hidden = false;
       q.addEventListener('input', filter);
-      q.addEventListener('keydown', function(e){ if (e.key === 'Escape' && q.value) { q.value = ''; filter(); e.stopPropagation(); } });
+      var tools = $('ag-tools'), openBtn = $('ag-open');
+      function setSearch(o){                              // the icon opens the field (it slides out to the left); closing clears the search
+        tools.classList.toggle('open', o); openBtn.setAttribute('aria-expanded', o);
+        if (o) setTimeout(function(){ q.focus(); }, 60);
+        else if (q.value) { q.value = ''; filter(); }
+      }
+      openBtn.addEventListener('click', function(){ setSearch(!tools.classList.contains('open')); });
+      q.addEventListener('blur', function(){ setTimeout(function(){ if (!q.value && document.activeElement !== xBtn && document.activeElement !== openBtn) setSearch(false); }, 120); });
+      q.addEventListener('keydown', function(e){ if (e.key === 'Escape') { e.stopPropagation(); if (q.value) { q.value = ''; filter(); } else { setSearch(false); openBtn.focus(); } } });
       xBtn.addEventListener('click', function(){ q.value = ''; filter(); q.focus(); });
     }
 
