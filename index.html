@@ -103,7 +103,7 @@ const AGENDA = [
     ["KEVIN MURRAY",  "2023 . 07 . 21"],
     ["LAURA COCKS, IAN DUCLOS, ANTÓNIO FEITEIRA",  "2023 . 04 . 08"],
 
-    ["SENSOR",  "2022 . 07 . 10","sensor"],
+    ["SENSOR",  "2022 . 07 . 10"],
 
     ]
   }
@@ -128,11 +128,6 @@ const AGENDA = [
      ===================================================================== -->
 <script>
 const TEXTS = {
-
-  sensor: {
-    poster: "assets/img/agenda/220710-sensor.webp",
-    alt: "Poster: Sensor, ARM.5-A, 10 July"
-  },
 
   transformer: {
     promoter: "ARM, Hekatombe",
@@ -343,7 +338,7 @@ const PAGE = {
   text: [""],
 
   /* ---- LOGO IN THE LEFT COLUMN (shown until an event is opened) ---------- */
-  restLogo: { src: "", alt: "ARM5" },   // the big logo is parked: put "assets/img/arm5a-logo.png" here to show it again
+  restLogo: { src: "assets/img/arm5a-logo.png", alt: "ARM5" },   // the big logo sits at the very end of the past table; "" = no logo
                                  // black logo on a transparent background (it turns white in dark mode by itself). "" = show the figure below instead
 
   /* ---- IMAGE (left column, 3:2 landscape, no border, no caption). Used only when restLogo.src is empty; empty src = halftone grayscale placeholder ---- */
@@ -431,7 +426,8 @@ main{grid-area:past;min-width:0}      /* upcoming and past events stack in the r
 
 /* agenda: a table without lines, same type as the old info lines. A line is clickable; the open one stays black */
 .ag-scroll{margin:0 0 1.4em -8px;overflow:auto;scrollbar-width:thin;scrollbar-color:var(--rule) transparent}
-.ag-pad{flex:none}
+.ag-pad{flex:none;position:relative;overflow:hidden}
+.ag-pad .rest-logo{position:absolute;left:0;right:0;bottom:28px;margin:0 auto;width:min(420px,calc(100% - 16px))}   /* the big logo: the last thing at the very end of the table */
 .ag-scroll{position:relative}
 .fly-zone{position:absolute;z-index:4;pointer-events:none;overflow:hidden}
 .fly-zone[hidden]{display:none}
@@ -553,9 +549,10 @@ aside{align-self:stretch}
   main,aside{grid-area:auto}
   aside{order:0;align-self:start;margin:6px 0 22px} main{order:1}
   .rest-logo{max-width:230px}
+  .ag-pad .rest-logo{width:min(230px,calc(100% - 16px))}
   .detail{position:relative;top:auto;width:100%}   /* relative, so that Info and Close stay inside the frame */
   .ag-scroll{max-height:none!important;overflow:visible}   /* phone: no scrolling box, the page itself scrolls */
-  .site{width:auto;margin:0 0 0 -12px;padding:20px 8px 12px 12px}
+  .site{width:calc(100% + 12px);max-width:none;margin:0 0 0 -12px;padding:20px 8px 12px 12px}
   .site-menu{left:12px}   /* the menu bar covers its own gap, so nothing shows between it and the year index */
   .ag-ctrl{top:var(--site-h,44px);z-index:6;padding:8px 0 6px 8px}   /* the year index stays in view under the menu */
   .ag-box input{font-size:16px}         /* 16px: stops the browser from zooming in when the search is tapped */
@@ -904,6 +901,7 @@ aside{align-self:stretch}
 
     // the year in view (the last year row that has reached the top of the table) turns black in the index
     // blank space under the last rows, so that even the last (short) years can be scrolled up to the top of the table
+    function padH(h){ var l = toolsBlock.logo; return Math.max(h, l && !l.hidden && l.offsetHeight ? l.offsetHeight + 56 : 0); }   // the end of the table always has room for the logo
     function fitSpace(){
       if (!toolsBlock || !toolsBlock.spacer) return;
       var w = toolsBlock.wrap, sp = toolsBlock.spacer, last = null;
@@ -911,11 +909,11 @@ aside{align-self:stretch}
       if (q.value.trim() || w.hidden) return;                       // while searching the list is short: no extra space
       yearOrder.forEach(function(y){ if (!yearFirst[y].tr.hidden) last = yearFirst[y].tr; });
       if (!last) return;
-      if (narrow()) { sp.style.height = Math.max(240, window.innerHeight - 90 - (toolsBlock.table.getBoundingClientRect().bottom - last.getBoundingClientRect().top)) + 'px'; return; }   // phone: room for the last years (and the fly)
+      if (narrow()) { sp.style.height = padH(Math.max(240, window.innerHeight - 90 - (toolsBlock.table.getBoundingClientRect().bottom - last.getBoundingClientRect().top))) + 'px'; return; }   // phone: room for the last years (and the fly)
       var ch = toolsBlock.ctrl ? toolsBlock.ctrl.offsetHeight : 0;
       if (toolsBlock.table.offsetHeight + ch <= w.clientHeight) return;   // everything fits: nothing to scroll
       var h = toolsBlock.table.getBoundingClientRect().bottom - last.getBoundingClientRect().top;
-      sp.style.height = Math.max(0, w.clientHeight - ch - h) + 'px';
+      sp.style.height = padH(Math.max(0, w.clientHeight - ch - h)) + 'px';
     }
     function markYear(){
       if (!toolsBlock) return;
@@ -994,8 +992,9 @@ aside{align-self:stretch}
     // image: halftone placeholder when there is no file, otherwise the picture in a 3:2 frame
     var fig = $('fig'), f = C.figure, rl = C.restLogo || {};
     if (rl.src) {
-      var lg2 = new Image(); lg2.className = 'rest-logo'; lg2.alt = rl.alt || ''; lg2.onerror = function(){ lg2.hidden = true; };   // if the file is not found nothing is shown (no broken-image text)
-      lg2.src = root + rl.src; fig.appendChild(lg2);
+      var lg2 = new Image(); lg2.className = 'rest-logo'; lg2.alt = rl.alt || ''; lg2.onerror = function(){ lg2.hidden = true; }; lg2.onload = function(){ if (toolsBlock) { fitSpace(); } };   // if the file is not found nothing is shown (no broken-image text)
+      lg2.src = root + rl.src;
+      if (toolsBlock && toolsBlock.spacer) { toolsBlock.logo = lg2; toolsBlock.spacer.appendChild(lg2); } else fig.appendChild(lg2);   // at the end of the past table (easter egg: seen only at the bottom)
     } else if (!f.src) {
       if (f.placeholder === false) return;
       var h = el('div', 'halftone'); h.setAttribute('role', 'img'); h.setAttribute('aria-label', f.alt || 'Image placeholder'); fig.appendChild(h);
