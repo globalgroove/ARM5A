@@ -64,7 +64,7 @@ const AGENDA = [
     ["PRADO, BANDA HUMILDE, FOLGOSA CADAFAZ",          "2026 . 10 . 30","prado"],
     ["HEROÍNA, CALHAU!, BANDA HUMILDE, DJ CONCRETE ",                 "2026 . 10 . 09","heroina"],
     ["PREHISTORIC WAR CULT",          "2026 . 09 . 24"],
-    ["MÉCANOSPHÉRE: PROJECTO DE MECANIZAÇÃO DOS MORTOS",          "2026 . 09 . 09","mecanosphere"],
+    ["MÉCANOSPHÉRE: PROJECTO DE MECANIZAÇÃO DOS MORTOS",          "2026 . 09 . 10","mecanosphere"],
     ["MARKET SATURÉE, MANGUALDE, MONGOLIAN THROAT FUCK (JURASSIC DUB VERSION), DRENAGEM",          "2026 . 07 . 11"],
     ["VICENTE MATEUS, PAULA SANCHEZ, MARIJA KEROCEVIC, GABRIEL VALTCHEV",          "2026 . 07 . 02","vicente"],
     ["AXEL LARSEN, HOCHIWAH, JANIK WEU, KIRA KREMPOVA",          "2026 . 06 . 15","axel"],
@@ -103,7 +103,7 @@ const AGENDA = [
     ["KEVIN MURRAY",  "2023 . 07 . 21"],
     ["LAURA COCKS, IAN DUCLOS, ANTÓNIO FEITEIRA",  "2023 . 04 . 08"],
 
-    ["SENSOR",  "2022 . 07 . 10","sensor"],
+    ["SENSOR",  "2022 . 07 . 10"],
 
     ]
   }
@@ -129,11 +129,6 @@ const AGENDA = [
 <script>
 const TEXTS = {
 
-  sensor: {
-    poster: "assets/img/agenda/220710-sensor.webp",
-    alt: "Poster: Sensor, ARM.5-A, 10 July"
-  },
-
   transformer: {
     promoter: "ARM, Hekatombe",
     poster: "assets/img/agenda/260514-transformer-megabasse-telomante.webp",
@@ -151,7 +146,7 @@ const TEXTS = {
   },
 
   mecanosphere: {
-    poster: "assets/img/agenda/260909-mecanosphere.webp",
+    poster: "assets/img/agenda/260910-mecanosphere.webp",
     alt: "Poster: Mécanosphère, projecto de mecanização dos mortos"
   },
 
@@ -163,6 +158,7 @@ const TEXTS = {
   },
 
   bearbones: {
+    price: "5",
     poster: "assets/img/agenda/251023-bear-bones-lay-low.webp",
     alt: "Poster: Bear Bones Lay Low, 23 October"
   },
@@ -342,7 +338,7 @@ const PAGE = {
   text: [""],
 
   /* ---- LOGO IN THE LEFT COLUMN (shown until an event is opened) ---------- */
-  restLogo: { src: "", alt: "ARM5" },   // the big logo is parked: put "assets/img/arm5a-logo.png" here to show it again
+  restLogo: { src: "assets/img/arm5a-logo.png", alt: "ARM5" },   // the big logo sits at the very end of the past table; "" = no logo
                                  // black logo on a transparent background (it turns white in dark mode by itself). "" = show the figure below instead
 
   /* ---- IMAGE (left column, 3:2 landscape, no border, no caption). Used only when restLogo.src is empty; empty src = halftone grayscale placeholder ---- */
@@ -403,6 +399,9 @@ mark{background:var(--ink);color:var(--paper);padding:0 1px}   /* search matches
 .site-menu a::before{content:"";display:inline-block;width:1.2em}
 .site-menu a[aria-current]::before{content:"\25CF"}
 .site-menu a:hover,.site-menu a:focus-visible{background:var(--ink);color:var(--paper);outline:none}
+.site-menu li:has(>.ag-tools[hidden]){display:none}
+.site-menu .ag-tools,.page.no-tabs .site-menu .ag-tools{position:static;width:auto;margin:0;padding:8px 12px 8px 8px;display:flex;z-index:auto}   /* the search lives in the dropdown, above the links */
+.site-menu .ag-tools[hidden]{display:none}
 
 /* logo placeholder marks. "registration" uses the ink colour only; "lens" is ink plus paper-coloured cut-outs */
 .logo .ink{fill:currentColor}
@@ -427,7 +426,8 @@ main{grid-area:past;min-width:0}      /* upcoming and past events stack in the r
 
 /* agenda: a table without lines, same type as the old info lines. A line is clickable; the open one stays black */
 .ag-scroll{margin:0 0 1.4em -8px;overflow:auto;scrollbar-width:thin;scrollbar-color:var(--rule) transparent}
-.ag-pad{flex:none}
+.ag-pad{flex:none;position:relative;overflow:hidden}
+.ag-pad .rest-logo{position:absolute;left:0;right:0;bottom:28px;margin:0 auto;width:min(420px,calc(100% - 16px))}   /* the big logo: the last thing at the very end of the table */
 .ag-scroll{position:relative}
 .fly-zone{position:absolute;z-index:4;pointer-events:none;overflow:hidden}
 .fly-zone[hidden]{display:none}
@@ -443,6 +443,7 @@ main{grid-area:past;min-width:0}      /* upcoming and past events stack in the r
 @keyframes fly-flap-r{from{transform:rotate(28deg)}to{transform:rotate(-22deg)}}
 @media (prefers-reduced-motion:reduce){.fly .flap{animation:none}}
 .fly.dead{cursor:default}
+.fly{transition:opacity .12s linear}
 .ag-scroll::-webkit-scrollbar{width:6px;height:6px}
 .ag-scroll::-webkit-scrollbar-thumb{background:var(--rule)}
 .agenda{width:100%;border-collapse:separate;border-spacing:0 2px;margin:0}
@@ -504,7 +505,7 @@ main{grid-area:past;min-width:0}      /* upcoming and past events stack in the r
 aside{align-self:stretch}
 .detail{--panel:var(--ink);--panel-text:var(--paper);--panel-rule:#3b3c3b;position:sticky;top:56px;background:var(--panel);color:var(--panel-text);width:min(100%,calc((100vh - 200px) * var(--ar-n,.75)))}   /* dark panel, like the discography preview. The frame takes the poster's proportions; on a short screen it narrows instead of leaving margins */
 .detail[hidden]{display:none}
-.detail .close{position:absolute;top:6px;right:6px;z-index:2;background:var(--paper);color:var(--ink);border:0;font:500 10px/1 var(--label);letter-spacing:.14em;padding:4px 7px;cursor:pointer}
+.detail .close{position:absolute;top:6px;right:6px;z-index:2;width:22px;height:22px;padding:0 0 2px;background:var(--paper);color:var(--ink);border:1px solid var(--ink);border-radius:0;font:400 16px/1 var(--label);text-align:center;cursor:pointer}   /* a small boxed x */
 .detail .close:hover,.detail .close:focus-visible{background:var(--ink);color:var(--paper);outline:1px solid var(--paper)}
 .detail .stage{position:relative}
 .detail .info{position:absolute;inset:0;z-index:1;overflow:auto;background:var(--panel);color:var(--panel-text);padding:34px 10px 10px;scrollbar-width:thin;scrollbar-color:var(--panel-rule) transparent}
@@ -542,17 +543,18 @@ aside{align-self:stretch}
 .frame img[hidden]{display:none}
 
 @media (max-width:760px){
-  .page{padding:20px 44px 40px 12px}
-  .ag-tools,.page.no-tabs .ag-tools{position:static;width:auto;margin:0 0 14px}   /* phone: the search sits under the menu */
+  .page{padding:0 44px 40px 12px}
   .page.no-tabs{padding-right:12px}
   .cols{grid-template-columns:minmax(0,1fr)}
   .cols{grid-template-areas:none}       /* phone: the logo, then the tables. The open event sits inside the table, right under its line */
   main,aside{grid-area:auto}
   aside{order:0;align-self:start;margin:6px 0 22px} main{order:1}
   .rest-logo{max-width:230px}
+  .ag-pad .rest-logo{width:min(230px,calc(100% - 16px))}
   .detail{position:relative;top:auto;width:100%}   /* relative, so that Info and Close stay inside the frame */
   .ag-scroll{max-height:none!important;overflow:visible}   /* phone: no scrolling box, the page itself scrolls */
-  .site{width:auto;margin:0;padding-bottom:12px}   /* the menu bar covers its own gap, so nothing shows between it and the year index */
+  .site{width:calc(100% + 12px);max-width:none;margin:0 0 0 -12px;padding:20px 8px 12px 12px}
+  .site-menu{left:12px}   /* the menu bar covers its own gap, so nothing shows between it and the year index */
   .ag-ctrl{top:var(--site-h,44px);z-index:6;padding:8px 0 6px 8px}   /* the year index stays in view under the menu */
   .ag-box input{font-size:16px}         /* 16px: stops the browser from zooming in when the search is tapped */
   .tab-side{font-size:18px;padding:12px 6px}
@@ -593,7 +595,7 @@ aside{align-self:stretch}
       <aside>
         <figure class="fig-wrap" id="fig"></figure>
         <section class="detail" id="detail" hidden aria-label="Event details">
-          <button type="button" class="close" id="d-close">Close</button>
+          <button type="button" class="close" id="d-close" aria-label="Close">&times;</button>
           <div class="stage" id="d-stage">
             <div class="poster" id="d-poster"></div>
             <!-- the details sit behind the poster: click the poster (or the Info button) to read them, click again to go back -->
@@ -690,9 +692,10 @@ aside{align-self:stretch}
       if (hash) spy.push({ a: a, id: l[1].slice(1) });
       li.appendChild(a); menu.appendChild(li);
     });
+    var sli = el('li'); sli.appendChild($('ag-tools')); menu.insertBefore(sli, menu.firstChild);   // the search moves into the dropdown
     if (!links.length) { btn.classList.add('static'); btn.removeAttribute('aria-expanded'); btn.removeAttribute('aria-controls'); }
     else {
-      var setOpen = function(o){ menu.hidden = !o; btn.setAttribute('aria-expanded', o); };
+      var setOpen = function(o){ menu.hidden = !o; btn.setAttribute('aria-expanded', o); if (o && !narrow() && !$('ag-tools').hidden) $('ag-q').focus(); };
       btn.addEventListener('click', function(){ setOpen(menu.hidden); });
       menu.addEventListener('click', function(e){ if (e.target.closest('a')) setOpen(false); });
       document.addEventListener('click', function(e){ if (!$('site').contains(e.target)) setOpen(false); });
@@ -899,6 +902,7 @@ aside{align-self:stretch}
 
     // the year in view (the last year row that has reached the top of the table) turns black in the index
     // blank space under the last rows, so that even the last (short) years can be scrolled up to the top of the table
+    function padH(h){ var l = toolsBlock.logo; return Math.max(h, l && !l.hidden && l.offsetHeight ? l.offsetHeight + 56 : 0); }   // the end of the table always has room for the logo
     function fitSpace(){
       if (!toolsBlock || !toolsBlock.spacer) return;
       var w = toolsBlock.wrap, sp = toolsBlock.spacer, last = null;
@@ -906,11 +910,11 @@ aside{align-self:stretch}
       if (q.value.trim() || w.hidden) return;                       // while searching the list is short: no extra space
       yearOrder.forEach(function(y){ if (!yearFirst[y].tr.hidden) last = yearFirst[y].tr; });
       if (!last) return;
-      if (narrow()) { sp.style.height = Math.max(240, window.innerHeight - 90 - (toolsBlock.table.getBoundingClientRect().bottom - last.getBoundingClientRect().top)) + 'px'; return; }   // phone: room for the last years (and the fly)
+      if (narrow()) { sp.style.height = padH(Math.max(240, window.innerHeight - 90 - (toolsBlock.table.getBoundingClientRect().bottom - last.getBoundingClientRect().top))) + 'px'; return; }   // phone: room for the last years (and the fly)
       var ch = toolsBlock.ctrl ? toolsBlock.ctrl.offsetHeight : 0;
       if (toolsBlock.table.offsetHeight + ch <= w.clientHeight) return;   // everything fits: nothing to scroll
       var h = toolsBlock.table.getBoundingClientRect().bottom - last.getBoundingClientRect().top;
-      sp.style.height = Math.max(0, w.clientHeight - ch - h) + 'px';
+      sp.style.height = padH(Math.max(0, w.clientHeight - ch - h)) + 'px';
     }
     function markYear(){
       if (!toolsBlock) return;
@@ -929,7 +933,7 @@ aside{align-self:stretch}
       // as minimal as it gets: a dot and two sticks
       fb.innerHTML = '<svg viewBox="-12 -12 24 24" aria-hidden="true"><g class="flap"><path d="M0 0 L-8 -6"/></g><g class="flap r"><path d="M0 0 L8 -6"/></g><circle class="dot" r="2.3"/></svg>';
       zone.appendChild(fb); wrapF.appendChild(zone);        // inside the scrolling table, under the oldest entry
-      var S = 44, px = 120, py = 90, ang = Math.random() * 6.28, sp = 40, rest = 0, dead = false, last = 0, t0 = Math.random() * 100,
+      var wasIn = false, behind = false, S = 44, px = 120, py = 90, ang = Math.random() * 6.28, sp = 40, rest = 0, dead = false, last = 0, t0 = Math.random() * 100,
           calm = window.matchMedia && matchMedia('(prefers-reduced-motion:reduce)').matches;
       function place(extra){ fb.style.transform = 'translate(' + px.toFixed(1) + 'px,' + py.toFixed(1) + 'px) rotate(' + (ang * 57.2958 + 90).toFixed(1) + 'deg)' + (extra || ''); }
       function sync(){
@@ -959,6 +963,16 @@ aside{align-self:stretch}
         px += Math.cos(ang) * sp * dt; py += Math.sin(ang) * sp * dt;
         px = Math.max(0, Math.min(W, px)); py = Math.max(0, Math.min(H, py));
         place();
+        // the logo: each time the fly flies over it, it goes in front (seen) or behind (not seen at all) the logo
+        var L = toolsBlock.logo, inside = false;
+        if (L && !L.hidden && L.offsetWidth) {
+          var bx = toolsBlock.logoBox || { x0: 0, y0: 0, x1: 1, y1: 1 }, cx = px + S / 2, cy = py + S / 2;
+          inside = cx > L.offsetLeft + bx.x0 * L.offsetWidth - 4 && cx < L.offsetLeft + bx.x1 * L.offsetWidth + 4 &&
+                   cy > L.offsetTop + bx.y0 * L.offsetHeight - 4 && cy < L.offsetTop + bx.y1 * L.offsetHeight + 4;
+        }
+        if (inside && !wasIn) behind = Math.random() < .5;
+        wasIn = inside;
+        if (!dead) fb.style.opacity = (inside && behind) ? 0 : 1;
       }
       sync(); place();
       if (calm) fb.classList.add('rest'); else requestAnimationFrame(frame);        // reduced motion: it just sits there
@@ -989,8 +1003,17 @@ aside{align-self:stretch}
     // image: halftone placeholder when there is no file, otherwise the picture in a 3:2 frame
     var fig = $('fig'), f = C.figure, rl = C.restLogo || {};
     if (rl.src) {
-      var lg2 = new Image(); lg2.className = 'rest-logo'; lg2.alt = rl.alt || ''; lg2.onerror = function(){ lg2.hidden = true; };   // if the file is not found nothing is shown (no broken-image text)
-      lg2.src = root + rl.src; fig.appendChild(lg2);
+      var lg2 = new Image(); lg2.className = 'rest-logo'; lg2.alt = rl.alt || ''; lg2.onerror = function(){ lg2.hidden = true; }; lg2.onload = function(){
+        try {   // the opaque part of the logo (for the fly going behind it)
+          var cv = document.createElement('canvas'), w = 240, h = Math.max(1, Math.round(240 * lg2.naturalHeight / lg2.naturalWidth)); cv.width = w; cv.height = h;
+          var cx2 = cv.getContext('2d'); cx2.drawImage(lg2, 0, 0, w, h); var d = cx2.getImageData(0, 0, w, h).data, x0 = w, y0 = h, x1 = 0, y1 = 0;
+          for (var y = 0; y < h; y++) for (var x = 0; x < w; x++) if (d[(y * w + x) * 4 + 3] > 40) { if (x < x0) x0 = x; if (x > x1) x1 = x; if (y < y0) y0 = y; if (y > y1) y1 = y; }
+          if (x1 > x0 && toolsBlock) toolsBlock.logoBox = { x0: x0 / w, y0: y0 / h, x1: (x1 + 1) / w, y1: (y1 + 1) / h };
+        } catch (e) {}
+        if (toolsBlock) fitSpace();
+      };   // if the file is not found nothing is shown (no broken-image text)
+      lg2.src = root + rl.src;
+      if (toolsBlock && toolsBlock.spacer) { toolsBlock.logo = lg2; toolsBlock.spacer.appendChild(lg2); } else fig.appendChild(lg2);   // at the end of the past table (easter egg: seen only at the bottom)
     } else if (!f.src) {
       if (f.placeholder === false) return;
       var h = el('div', 'halftone'); h.setAttribute('role', 'img'); h.setAttribute('aria-label', f.alt || 'Image placeholder'); fig.appendChild(h);
