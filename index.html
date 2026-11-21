@@ -136,6 +136,8 @@ const TEXTS = {
   },
 
   axel: {
+    credits: "Pedro Abrantes",
+    promoter: "Pedro Abrantes",
     poster: "assets/img/agenda/260615-axel-larsen.webp",
     alt: "Poster: Axel Larsen, Hochiwah, Kira Krempova, 15 June"
   },
@@ -158,6 +160,8 @@ const TEXTS = {
   },
 
   bearbones: {
+    promoter: "Pedro Abrantes",
+    credits: "Pedro Abrantes",
     price: "5",
     poster: "assets/img/agenda/251023-bear-bones-lay-low.webp",
     alt: "Poster: Bear Bones Lay Low, 23 October"
@@ -169,6 +173,7 @@ const TEXTS = {
   },
 
   noiteprimordial: {
+    name: "Noite Primordial",
     promoter: "Umbra Bookings, Enfermo Distro, Hekatombe Records",
     price: "8",
     poster: "assets/img/agenda/270123-noite-primordial.webp",
@@ -205,6 +210,9 @@ const TEXTS = {
   },
 
   crepitaculo: {
+    name: "Crepitáculo",
+    lineup: "Cavaleiro da Cruz, Druída, Durvena Cabina ++",   // the short version; the full line-up is on the Info side
+    details: [["Line-Up", "Cavaleiro da Cruz, Druída, Durvena Cabina, Gambuzino, Gnoblin, Mafarrico DJ, Moira, Quimer, Rádio Sonoplasmática, Sarça Ardente, Sarcomancia, Trunaldwo777"]],
     price: "10",
     poster: "assets/img/agenda/261031-crepitaculo.webp",
     alt: "Poster: Crepitáculo, 31 October 2026"
@@ -223,12 +231,16 @@ const TEXTS = {
   },
 
   occupied: {
+    credits: "Neide Ramos",
+    promoter: "Pedro Abrantes",
     price: "5",
     poster: "assets/img/agenda/250915-occupied-head.webp",
     alt: "Poster: Occupied Head, Neither-Neither"
   },
 
   termitario: {
+    name: "Termitário #3",
+    lineup: "António Baião - Anarqueologia e Diagrama",
     promoter: "Trama",
     poster: "assets/img/agenda/250614-termitario-3.webp",
     alt: "Poster: Termitário #3, António Baião"
@@ -246,7 +258,8 @@ const TEXTS = {
   },
 
   holocausto: {
-    promoter: "ARM, Hekatombe",
+    promoter: "Enfermo Distro",
+    name: "Uns Brincam, Outros Fazem Barulho! Vol. III",
     price: "6",
     poster: "assets/img/agenda/241207-holocausto-canibal.webp",
     alt: "Poster: Holocausto Canibal, Drenagem, Distrofia"
@@ -503,9 +516,9 @@ main{grid-area:past;min-width:0}      /* upcoming and past events stack in the r
 
 /* event frame (left column): poster, title, details, text, link. Stays in view while the past events scroll */
 aside{align-self:stretch}
-.detail{--panel:var(--ink);--panel-text:var(--paper);--panel-rule:#3b3c3b;position:sticky;top:56px;background:var(--panel);color:var(--panel-text);width:min(100%,calc((100vh - 200px) * var(--ar-n,.75)))}   /* dark panel, like the discography preview. The frame takes the poster's proportions; on a short screen it narrows instead of leaving margins */
+.detail{--panel:var(--ink);--panel-text:var(--paper);--panel-rule:#3b3c3b;position:sticky;top:56px;background:var(--panel);color:var(--panel-text);width:min(100%,calc((100vh - var(--res,200px)) * var(--ar-n,.75)))}   /* dark panel, like the discography preview. The frame takes the poster's proportions; on a short screen it narrows instead of leaving margins */
 .detail[hidden]{display:none}
-.detail .close{position:absolute;top:6px;right:6px;z-index:2;width:22px;height:22px;padding:0 0 2px;background:var(--paper);color:var(--ink);border:1px solid var(--ink);border-radius:0;font:400 16px/1 var(--label);text-align:center;cursor:pointer}   /* a small boxed x */
+.detail .close{position:absolute;top:6px;right:6px;z-index:2;width:16px;height:16px;padding:0 0 3px;background:var(--paper);color:var(--ink);border:1px solid var(--ink);border-radius:0;font:400 16px/1 var(--label);text-align:center;cursor:pointer;box-sizing:border-box;display:flex;align-items:center;justify-content:center}   /* a small boxed x, tight around the letter */
 .detail .close:hover,.detail .close:focus-visible{background:var(--ink);color:var(--paper);outline:1px solid var(--paper)}
 .detail .stage{position:relative}
 .detail .info{position:absolute;inset:0;z-index:1;overflow:auto;background:var(--panel);color:var(--panel-text);padding:34px 10px 10px;scrollbar-width:thin;scrollbar-color:var(--panel-rule) transparent}
@@ -550,6 +563,7 @@ aside{align-self:stretch}
   main,aside{grid-area:auto}
   aside{order:0;align-self:start;margin:6px 0 22px} main{order:1}
   .rest-logo{max-width:230px}
+  .detail .close{width:26px;height:26px;padding:0 0 3px}   /* phone: a size a finger can hit */
   .ag-pad .rest-logo{width:min(230px,calc(100% - 16px))}
   .detail{position:relative;top:auto;width:100%}   /* relative, so that Info and Close stay inside the frame */
   .ag-scroll{max-height:none!important;overflow:visible}   /* phone: no scrolling box, the page itself scrolls */
@@ -727,17 +741,26 @@ aside{align-self:stretch}
       if (narrow()) { current.parentNode.insertBefore(inl, current.nextSibling); inlTd.appendChild(detail); figBox.hidden = false; }
       else { if (inl.parentNode) inl.parentNode.removeChild(inl); asideEl.appendChild(detail); figBox.hidden = true; }
     }
+    function fitFrame(){                                  // the poster gets the height left over once the spec list (longer for a long line-up) has its room
+      if (detail.hidden) return;
+      var pb = $('d-poster');
+      for (var i = 0; i < 3; i++) {
+        var under = detail.offsetHeight - pb.offsetHeight;
+        detail.style.setProperty('--res', Math.max(200, Math.round(56 + under + 24)) + 'px');
+      }
+    }
+    window.addEventListener('resize', fitFrame);
     function openEvent(tr, ev, quiet){
       if (current) { current.classList.remove('on'); current.querySelector('.ev').setAttribute('aria-expanded', 'false'); }
       current = tr; tr.classList.add('on'); tr.querySelector('.ev').setAttribute('aria-expanded', 'true');
       var sp = $('d-specs'); sp.innerHTML = '';
-      [['Line-Up', ev.title, ''], ['Data', (ev.date || '') + (ev.place ? '  \u00b7  ' + ev.place : ''), 'q'], ['Price', ev.price, ''], ['Promoter', ev.promoter, ''], ['Poster', ev.credits, '']].forEach(function(r){
+      [['Event', ev.name, ''], ['Line-Up', ev.lineup || ev.title, ''], ['Data', (ev.date || '') + (ev.place ? '  \u00b7  ' + ev.place : ''), 'q'], ['Price', ev.price, ''], ['Promoter', ev.promoter, ''], ['Poster', ev.credits, '']].forEach(function(r){
         if (!r[1]) return; sp.appendChild(el('dt', null, r[0])); sp.appendChild(el('dd', r[2], r[1]));
       });
       var pbox = $('d-poster'); pbox.innerHTML = ''; detail.style.removeProperty('--ar-n'); pbox.style.removeProperty('--ar');
       if (ev.poster) {                                   // the frame takes the poster's own proportions once it has loaded
         var im = new Image(); im.alt = ev.alt || '';
-        im.onload = function(){ pbox.style.setProperty('--ar', im.naturalWidth + '/' + im.naturalHeight); detail.style.setProperty('--ar-n', im.naturalWidth / im.naturalHeight); };
+        im.onload = function(){ pbox.style.setProperty('--ar', im.naturalWidth + '/' + im.naturalHeight); detail.style.setProperty('--ar-n', im.naturalWidth / im.naturalHeight); fitFrame(); };
         im.onerror = function(){ im.hidden = true; };
         im.src = root + ev.poster; pbox.appendChild(im);
       }
@@ -752,7 +775,7 @@ aside{align-self:stretch}
       var showBtn = hasInfo || C.infoAlways !== false;                    // PAGE.infoAlways: the Info button shows even when there is nothing more to read
       detail.classList.toggle('has-info', showBtn); $('d-flip').hidden = !showBtn;
       showInfo(false);                                   // every event opens on its poster
-      detail.hidden = false; dock();
+      detail.hidden = false; dock(); fitFrame();
       if (!quiet && !narrow()) {                         // website: the clicked line goes exactly to the top of its table, under the year index
         var sw = tr.closest('.ag-scroll');
         if (sw && sw.scrollHeight > sw.clientHeight + 1) { var c0 = sw.querySelector('.ag-ctrl'); sw.scrollTo({ top: sw.scrollTop + tr.getBoundingClientRect().top - sw.getBoundingClientRect().top - (c0 ? c0.offsetHeight : 0), behavior: 'smooth' }); }
@@ -832,7 +855,7 @@ aside{align-self:stretch}
         b.addEventListener('click', function(e){ e.stopPropagation(); if (current === tr) closeEvent(); else openEvent(tr, ev); });
         body.appendChild(tr);
         if (yr) markerAt = -1; else if (markerAt < 0) markerAt = items.length;      // remember where a run of lines without a year starts
-        items.push({ tr: tr, btn: b, text: ev.title, hay: norm([ev.title, ev.date, ev.place || '', (ev.details || []).map(function(d){ return d.join(' '); }).join(' '), [].concat(ev.text || []).join(' ').replace(/<[^>]*>/g, ' ')].join(' ')) });
+        items.push({ tr: tr, btn: b, text: ev.title, hay: norm([ev.title, ev.name || '', ev.lineup || '', ev.date, ev.place || '', (ev.details || []).map(function(d){ return d.join(' '); }).join(' '), [].concat(ev.text || []).join(' ').replace(/<[^>]*>/g, ' ')].join(' ')) });
       });
       var wrap = el('div', 'ag-scroll');                // height limit: a block taller than agendaMaxHeight scrolls
       wrap.style.maxHeight = C.agendaMaxHeight || '55vh';
