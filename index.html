@@ -401,9 +401,9 @@ mark{background:var(--ink);color:var(--paper);padding:0 1px}   /* search matches
 .logo[hidden]{display:none}
 .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
 .menu-btn{display:none}
-.site-btn{display:block;background:none;color:inherit;border:0;padding:3px 0;font:500 14px/1.3 var(--label);letter-spacing:.14em;cursor:default;text-align:left}   /* desktop: just the title, the sections sit next to it */
+.site-btn{display:block;background:none;color:inherit;border:0;padding:3px 0;font:500 18px/1.3 var(--label);letter-spacing:.14em;cursor:default;text-align:left}   /* desktop: just the title, the sections sit next to it */
 .site-menu{display:flex;gap:28px;margin:0;padding:0;list-style:none}   /* desktop: the sections of the site, side by side */
-.site-menu a{display:block;padding:3px 0;font:400 14px/1.3 var(--label);letter-spacing:.14em;text-decoration:none;color:var(--paper);opacity:.72;transition:opacity .2s}
+.site-menu a{display:block;padding:3px 0;font:400 12px/1.3 var(--label);letter-spacing:.14em;text-decoration:none;color:var(--paper);opacity:.72;transition:opacity .2s}
 .site-menu a:hover,.site-menu a:focus-visible{opacity:1;outline:none}
 .site-menu a[aria-current]{opacity:1}
 
@@ -574,7 +574,7 @@ aside{align-self:stretch}
   .site-menu,.site-menu[hidden]{position:absolute;top:100%;left:0;right:0;display:block;margin:0;background:var(--ink);border-top:1px solid #3b3c3b}   /* phone: the title opens the sections as a dropdown */
   .site-menu[hidden]{display:none}
   .site-menu li+li{border-top:1px solid #3b3c3b}
-  .site-menu a{padding:12px 12px;opacity:1}
+  .site-menu a{padding:12px 12px;font-size:14px;opacity:1}
   .ag-tools,.page.no-tabs .ag-tools{top:calc(env(safe-area-inset-top,0px) + 11px);right:42px}   /* phone: the search icon, with the menu icon in the very corner to its right */
   .ag-tools.open .ag-box{width:calc(100vw - 190px)}   /* stays clear of the site title */
   .ag-count{display:none}   /* the menu bar covers its own gap, so nothing shows between it and the year index */
