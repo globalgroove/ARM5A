@@ -476,8 +476,11 @@ main{grid-area:past;min-width:0}      /* upcoming and past events stack in the r
 .agenda tbody tr.yr:first-child th{border-bottom:0}
 .ag-ctrl .ag-years{margin:0;line-height:14px}
 .agenda.up th{font-size:16px;padding:6px 28px 6px 8px}
-.agenda.up tr>*{background:var(--ink);color:var(--paper)}   /* upcoming events: solid black rows */
-.agenda.up tr:hover>*{opacity:.86}
+.agenda.up tr>*{background:transparent;color:var(--ink);border:solid var(--ink);border-width:1px 0}   /* upcoming events: outlined rows */
+.agenda.up tr>th:first-child{border-left-width:1px}
+.agenda.up tr>td:last-child{border-right-width:1px}
+.agenda.up tr:first-child>*,.agenda.up tr:hover>*,.agenda.up tr.on>*{background:var(--ink);color:var(--paper)}   /* the very next event is solid black; hover and the open row turn black too */
+.agenda.up tr.ev-inline>*{border:0}
 .agenda.up td{font-size:14px;padding:7px 8px 6px 0}
 .agenda .pl{display:block;margin-top:1px;font:400 12px/1.4 var(--value);letter-spacing:.04em;opacity:.7}
 .ag-tag{margin:0 0 7px;font:400 10px/14px var(--value);letter-spacing:.2em;color:var(--rule);text-transform:uppercase}   /* same quiet type as the year index */
